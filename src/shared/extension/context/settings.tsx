@@ -7,7 +7,10 @@ import {
   useState,
 } from 'react';
 
-import { onWindowMessage, SHOW_EXTENSION_CONTEXT_MENU } from 'shared/messaging';
+import {
+  onWindowMessage,
+  TOGGLE_EXTENSION_CONTEXT_MENU_VISIBILITY,
+} from 'shared/messaging';
 import { createContextHook } from 'shared/ui';
 
 import { ExtensionSettings } from '../types';
@@ -80,8 +83,10 @@ export const ExtensionSettingsProvider = ({ children }: Properties) => {
   }, [queryClient]);
 
   useEffect(() => {
-    onWindowMessage<void>(SHOW_EXTENSION_CONTEXT_MENU, () => {
-      setIsContextMenuVisible(true);
+    onWindowMessage<void>(TOGGLE_EXTENSION_CONTEXT_MENU_VISIBILITY, () => {
+      setIsContextMenuVisible((previous) => {
+        return !previous;
+      });
     });
   }, []);
 

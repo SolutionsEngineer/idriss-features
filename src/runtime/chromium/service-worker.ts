@@ -1,4 +1,7 @@
-import { ServiceWorker } from 'infrastructure/service-worker';
+import {
+  ServiceWorker,
+  EXTENSION_BUTTON_CLICKED,
+} from 'infrastructure/service-worker';
 
 /*  Chromium Wallets
     nkbihfbeogaeaoehlefnkodbefgpgknn - MetaMask
@@ -34,13 +37,10 @@ const onInstalled = () => {
       'chrome-extension://fnjhmkhhmkbjkkabndcnnogagogbneec/*',
     ],
   });
-  chrome.contextMenus.onClicked.addListener(() => {
-    chrome.windows
-      .create({
-        url: '/standalone.html',
-        width: 450,
-        height: 640,
-        type: 'popup',
+  chrome.action.onClicked.addListener((tab) => {
+    chrome.tabs
+      .sendMessage(tab?.id ?? 0, {
+        type: EXTENSION_BUTTON_CLICKED,
       })
       .catch(console.error);
   });

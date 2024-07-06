@@ -25,6 +25,7 @@ import {
 } from 'host/warpcast';
 import { AgoraApp } from 'application/agora';
 import { TallyApp } from 'application/tally';
+import { ExtensionContextMenu } from 'application/extension-context-menu';
 export class Application {
   private constructor() {}
 
@@ -60,11 +61,14 @@ const ApplicationWithProviders = () => {
               <NiceModal.Provider>
                 <WalletContextProvider disabledWalletsRdns={disabledWalletRdns}>
                   <ExtensionSettingsProvider>
-                    <TwitterScrapingContextProvider>
-                      <WarpcastScrapingContextProvider>
-                        <Applications />
-                      </WarpcastScrapingContextProvider>
-                    </TwitterScrapingContextProvider>
+                    <>
+                      <ExtensionContextMenu />
+                      <TwitterScrapingContextProvider>
+                        <WarpcastScrapingContextProvider>
+                          <Applications />
+                        </WarpcastScrapingContextProvider>
+                      </TwitterScrapingContextProvider>
+                    </>
                   </ExtensionSettingsProvider>
                 </WalletContextProvider>
               </NiceModal.Provider>

@@ -3,6 +3,7 @@ import {
   COMMAND_BUS_RESPONSE_MESSAGE,
   CommandResponse,
   POPUP_TO_WEBPAGE_MESSAGE,
+  SHOW_EXTENSION_CONTEXT_MENU,
   SerializedCommand,
   onWindowMessage,
 } from 'shared/messaging';
@@ -13,6 +14,7 @@ import {
 } from 'shared/extension';
 import { ExtensionStatusManager } from 'src/popup/extension-status-manager';
 
+import { EXTENSION_BUTTON_CLICKED } from '../constants';
 import { ExperimentalFeaturesManager } from '../../popup/experimental-features-manager';
 
 export class ContentScript {
@@ -74,6 +76,15 @@ export class ContentScript {
           detail: request.detail.data,
         };
         window.postMessage(message);
+        return;
+      }
+
+      if (request.type === EXTENSION_BUTTON_CLICKED) {
+        const message = {
+          type: SHOW_EXTENSION_CONTEXT_MENU,
+        };
+        window.postMessage(message);
+        return;
       }
     });
   }

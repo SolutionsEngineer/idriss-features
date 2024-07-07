@@ -1,20 +1,25 @@
+import { useState } from 'react';
+
 import { useExtensionSettings } from 'shared/extension';
-import { IDRISS_ICON } from 'shared/idriss';
-import { Checkbox, Closable } from 'shared/ui';
+import { IDRISS_ICON_WITH_TEXT } from 'shared/idriss';
+import { Checkbox, classes, Closable, Toggle } from 'shared/ui';
 
 export const App = () => {
   const { isContextMenuVisible, hideContextMenu } = useExtensionSettings();
+  const [toggle, setToggle] = useState(false);
+  const [checkbox, setCheckbox] = useState(false);
 
   if (!isContextMenuVisible) {
     return null;
   }
   return (
     <Closable
+      closeButtonClassName="hidden"
       closeOnClickAway
       onClose={hideContextMenu}
-      className="fixed right-6 top-6 z-50 flex h-96 w-80 flex-col bg-white p-0"
+      className="fixed right-6 top-6 z-50 flex size-[400px] flex-col overflow-hidden rounded-md bg-white p-0"
     >
-      <nav className="flex items-center justify-between bg-white drop-shadow-sm">
+      <nav className=" flex items-center justify-between bg-white drop-shadow-sm">
         <a
           href="https://www.idriss.xyz/"
           className="flex items-center justify-center"
@@ -23,23 +28,31 @@ export const App = () => {
         >
           <img
             className="my-2 ml-2 h-12 w-auto"
-            src={IDRISS_ICON}
+            src={IDRISS_ICON_WITH_TEXT}
             alt="IDriss Logo"
           />
         </a>
+        <Toggle
+          checked={toggle}
+          onCheckedChange={() => {
+            setToggle((previous) => {
+              return !previous;
+            });
+          }}
+        />
       </nav>
       <div className="shrink-0 grow p-10">
         <div>
           <label
             htmlFor="first_name"
-            className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+            className="mb-1 block text-xs text-gray-700"
           >
             Look up your wallet address
           </label>
           <input
             type="text"
             id="first_name"
-            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            className="mb-1.5 box-border block h-[38px] w-full rounded border border-[#cccccc] bg-white px-3 py-2 align-middle font-sans text-sm leading-[1.428571429] text-[#333333] outline-none"
             placeholder="hello@idriss.xyz  |  +1 650...  |  @IDriss_xyz"
             required
           />
@@ -50,7 +63,7 @@ export const App = () => {
           <div className="flex items-center">
             <span className="mr-2 text-lg">🧪</span>
             <p className="text-sm">
-              Enable
+              Enable{' '}
               <a
                 href="https://docs.idriss.xyz/user-guides/idriss-book#alpha-features-for-twitter"
                 target="_blank"
@@ -58,16 +71,51 @@ export const App = () => {
                 className="cursor-pointer underline"
               >
                 alpha features
-              </a>
+              </a>{' '}
               for Twitter
             </p>
           </div>
           <div className="ml-2 mt-1">
-            <Checkbox onChange={() => {}} value={false} />
+            {/* <Checkbox onChange={setCheckbox} value={checkbox} /> */}
+            <label className="inline-flex cursor-pointer items-center">
+              <input
+                type="checkbox"
+                className="sr-only"
+                checked={checkbox}
+                onChange={(event) => {
+                  setCheckbox(event.target.checked);
+                }}
+              />
+              <div
+                className={classes(
+                  'flex size-4 items-center justify-center rounded-sm border border-gray-500 bg-white',
+                  {
+                    'border-white': checkbox,
+                  },
+                )}
+              >
+                <svg
+                  className={classes('hidden size-4 text-black', {
+                    block: checkbox,
+                  })}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="5"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+            </label>
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-3 divide-x divide-gray-900/5 bg-white drop-shadow-2xl">
+      <footer className="grid grid-cols-3 divide-x divide-gray-900/5 bg-white drop-shadow-2xl">
         <a
           href="https://docs.idriss.xyz/user-guides/idriss-book#where-can-you-use-the-extension"
           target="_blank"
@@ -125,7 +173,7 @@ export const App = () => {
           </svg>
           Twitter
         </a>
-      </div>
+      </footer>
     </Closable>
   );
 };

@@ -1,4 +1,4 @@
-import { useMemo, createElement, StrictMode, useEffect } from 'react';
+import { useMemo, createElement, useEffect } from 'react';
 import NiceModal from '@ebay/nice-modal-react';
 import { createRoot } from 'react-dom/client';
 
@@ -53,30 +53,30 @@ const ApplicationWithProviders = () => {
   }, [isTwitter]);
 
   return (
-    <StrictMode>
-      <ErrorBoundary exceptionEventName="application-runtime-error">
-        <PortalProvider>
-          <TailwindProvider>
-            <QueryProvider>
-              <NiceModal.Provider>
-                <WalletContextProvider disabledWalletsRdns={disabledWalletRdns}>
-                  <ExtensionSettingsProvider>
-                    <>
-                      <ExtensionContextMenu />
-                      <TwitterScrapingContextProvider>
-                        <WarpcastScrapingContextProvider>
-                          <Applications />
-                        </WarpcastScrapingContextProvider>
-                      </TwitterScrapingContextProvider>
-                    </>
-                  </ExtensionSettingsProvider>
-                </WalletContextProvider>
-              </NiceModal.Provider>
-            </QueryProvider>
-          </TailwindProvider>
-        </PortalProvider>
-      </ErrorBoundary>
-    </StrictMode>
+    // <StrictMode>
+    <ErrorBoundary exceptionEventName="application-runtime-error">
+      <PortalProvider>
+        <TailwindProvider>
+          <QueryProvider>
+            <NiceModal.Provider>
+              <WalletContextProvider disabledWalletsRdns={disabledWalletRdns}>
+                <ExtensionSettingsProvider>
+                  <>
+                    <ExtensionContextMenu />
+                    <TwitterScrapingContextProvider>
+                      <WarpcastScrapingContextProvider>
+                        <Applications />
+                      </WarpcastScrapingContextProvider>
+                    </TwitterScrapingContextProvider>
+                  </>
+                </ExtensionSettingsProvider>
+              </WalletContextProvider>
+            </NiceModal.Provider>
+          </QueryProvider>
+        </TailwindProvider>
+      </PortalProvider>
+    </ErrorBoundary>
+    // </StrictMode>
   );
 };
 

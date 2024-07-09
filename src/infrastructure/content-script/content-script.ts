@@ -15,7 +15,6 @@ import {
 import { ExtensionStatusManager } from 'src/popup/extension-status-manager';
 
 import { EXTENSION_BUTTON_CLICKED } from '../constants';
-import { ExperimentalFeaturesManager } from '../../popup/experimental-features-manager';
 
 export class ContentScript {
   private constructor(private environment: typeof chrome) {}
@@ -92,8 +91,11 @@ export class ContentScript {
   subscribeToExtensionSettings() {
     onWindowMessage(GET_EXTENSION_SETTINGS_REQUEST, async () => {
       const detail: ExtensionSettings = {
-        experimentalFeatures: await ExperimentalFeaturesManager.isEnabled(),
-        enabled: await ExtensionStatusManager.isEnabled(),
+        isExtensionEnabled: await ExtensionStatusManager.isEnabled(),
+        isAgoraApplicationEnabled: false,
+        isPolymarketApplicationEnabled: false,
+        isSnapshotApplicationEnabled: false,
+        isTallyApplicationEnabled: false,
       };
       const message = {
         type: GET_EXTENSION_SETTINGS_RESPONSE,

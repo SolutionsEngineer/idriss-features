@@ -36,7 +36,7 @@ export class ExtensionStatusManager {
 
   private static publishMessage(isEnabled: boolean) {
     const data: Partial<ExtensionSettings> = {
-      enabled: isEnabled,
+      isExtensionEnabled: isEnabled,
     };
 
     const detail = {

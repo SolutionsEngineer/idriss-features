@@ -2,11 +2,7 @@ import { classes } from 'shared/ui/utils';
 
 import { ToggleProperties } from './toggle.types';
 
-export const Toggle = ({
-  checked,
-  label,
-  onCheckedChange,
-}: ToggleProperties) => {
+export const Toggle = ({ checked, onCheckedChange }: ToggleProperties) => {
   return (
     <label className="relative inline-flex cursor-pointer items-center">
       <input

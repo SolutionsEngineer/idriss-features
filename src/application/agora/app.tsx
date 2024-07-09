@@ -5,7 +5,7 @@ import { useTwitterLocationInfo } from 'host/twitter';
 import { ProposalHandleContainer, ProposalMainContainer } from './widgets';
 
 export const App = () => {
-  const { experimentalFeatures } = useExtensionSettings();
+  const { isAgoraApplicationEnabled } = useExtensionSettings();
   const {
     isTwitter,
     isTwitterHandlePage,
@@ -13,7 +13,7 @@ export const App = () => {
     twitterHandleFromPathname,
   } = useTwitterLocationInfo();
 
-  if (!experimentalFeatures || !isTwitter) {
+  if (!isAgoraApplicationEnabled || !isTwitter) {
     return null;
   }
 

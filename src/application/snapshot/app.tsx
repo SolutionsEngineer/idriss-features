@@ -5,7 +5,7 @@ import { useTwitterLocationInfo } from 'host/twitter';
 import { ProposalHandleContainer, ProposalMainContainer } from './widgets';
 
 export const App = () => {
-  const { experimentalFeatures } = useExtensionSettings();
+  const { isSnapshotApplicationEnabled } = useExtensionSettings();
 
   const {
     isTwitter,
@@ -14,7 +14,7 @@ export const App = () => {
     twitterHandleFromPathname,
   } = useTwitterLocationInfo();
 
-  if (!experimentalFeatures || !isTwitter) {
+  if (!isSnapshotApplicationEnabled || !isTwitter) {
     return null;
   }
 

@@ -7,6 +7,7 @@ export { ErrorMessage } from './error-message';
 export { Modal } from './modal';
 export { IconButton } from './icon-button';
 export { Icon } from './icon';
+export type { IconName } from './icon';
 export { CurrencyInput } from './currency-input';
 export { InputBase } from './input-base';
 export { WidgetBase } from './widget-base';

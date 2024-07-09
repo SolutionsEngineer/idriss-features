@@ -4,7 +4,7 @@ import { useTwitterLocationInfo, useHandleToUsernameMap } from 'host/twitter';
 
 import { ProposalHandleContainer, ProposalMainContainer } from './widgets';
 export const App = () => {
-  const { experimentalFeatures } = useExtensionSettings();
+  const { isTallyApplicationEnabled } = useExtensionSettings();
 
   const {
     isTwitter,
@@ -15,7 +15,7 @@ export const App = () => {
 
   const { data: daoHandles } = useHandleToUsernameMap('tally');
 
-  if (!experimentalFeatures || !isTwitter) {
+  if (!isTallyApplicationEnabled || !isTwitter) {
     return null;
   }
 

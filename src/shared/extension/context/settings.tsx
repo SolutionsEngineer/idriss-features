@@ -1,9 +1,9 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ReactNode,
   createContext,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 
@@ -13,74 +13,73 @@ import {
 } from 'shared/messaging';
 import { createContextHook } from 'shared/ui';
 
-import { ExtensionSettings } from '../types';
 import {
-  EXTENSION_SETTINGS_CHANGE,
   GET_EXTENSION_SETTINGS_REQUEST,
   GET_EXTENSION_SETTINGS_RESPONSE,
 } from '../constants';
+import { ManageExtensionStateCommand } from '../commands';
+import { ExtensionSettings } from '../types';
 
 interface Properties {
   children: ReactNode;
 }
 
+interface ExtensionSettingsContextValues extends ExtensionSettings {
+  isContextMenuVisible: boolean;
+  hideContextMenu: () => void;
+  changeExtensionState: (enabled: boolean) => Promise<void>;
+}
+
 const ExtensionSettingsContext = createContext<
-  | (ExtensionSettings & {
-      isContextMenuVisible: boolean;
-      hideContextMenu: () => void;
-    })
-  | undefined
+  ExtensionSettingsContextValues | undefined
 >(undefined);
 
+const initialExtensionSettings: ExtensionSettings = {
+  isAgoraApplicationEnabled: false,
+  isExtensionEnabled: false,
+  isSnapshotApplicationEnabled: false,
+  isTallyApplicationEnabled: false,
+  isPolymarketApplicationEnabled: false,
+};
+
 export const ExtensionSettingsProvider = ({ children }: Properties) => {
-  const queryClient = useQueryClient();
   const [isContextMenuVisible, setIsContextMenuVisible] = useState(false);
+  const [extensionSettings, setExtensionSettings] = useState(
+    initialExtensionSettings,
+  );
+
+  const isAgoraApplicationEnabled = useMemo(() => {
+    return extensionSettings.isAgoraApplicationEnabled;
+  }, [extensionSettings.isAgoraApplicationEnabled]);
+
+  const isExtensionEnabled = useMemo(() => {
+    return extensionSettings.isExtensionEnabled;
+  }, [extensionSettings.isExtensionEnabled]);
+
+  const isSnapshotApplicationEnabled = useMemo(() => {
+    return extensionSettings.isSnapshotApplicationEnabled;
+  }, [extensionSettings.isSnapshotApplicationEnabled]);
+
+  const isTallyApplicationEnabled = useMemo(() => {
+    return extensionSettings.isTallyApplicationEnabled;
+  }, [extensionSettings.isTallyApplicationEnabled]);
+
+  const isPolymarketApplicationEnabled = useMemo(() => {
+    return extensionSettings.isPolymarketApplicationEnabled;
+  }, [extensionSettings.isPolymarketApplicationEnabled]);
 
   const hideContextMenu = useCallback(() => {
     setIsContextMenuVisible(false);
   }, []);
 
-  const getInitialSettings = useCallback((): Promise<ExtensionSettings> => {
-    return new Promise((resolve) => {
-      window.postMessage({
-        type: GET_EXTENSION_SETTINGS_REQUEST,
+  const changeExtensionState = (enabled: boolean) => {
+    const command = new ManageExtensionStateCommand({ enabled });
+    return command.send().then(() => {
+      setExtensionSettings((previous) => {
+        return { ...previous, isExtensionEnabled: enabled };
       });
-
-      onWindowMessage<ExtensionSettings>(
-        GET_EXTENSION_SETTINGS_RESPONSE,
-        (settings, removeEventListener) => {
-          resolve(settings);
-          removeEventListener();
-        },
-      );
     });
-  }, []);
-
-  const settingsQuery = useQuery({
-    queryKey: ['settings'],
-    queryFn: getInitialSettings,
-  });
-
-  useEffect(() => {
-    onWindowMessage<Partial<ExtensionSettings>>(
-      EXTENSION_SETTINGS_CHANGE,
-      (settings) => {
-        queryClient.setQueryData<ExtensionSettings>(
-          ['settings'],
-          (cachedSettings) => {
-            if (cachedSettings) {
-              return { ...cachedSettings, ...settings };
-            }
-
-            return {
-              enabled: settings.enabled ?? false,
-              experimentalFeatures: settings.experimentalFeatures ?? false,
-            };
-          },
-        );
-      },
-    );
-  }, [queryClient]);
+  };
 
   useEffect(() => {
     onWindowMessage<void>(TOGGLE_EXTENSION_CONTEXT_MENU_VISIBILITY, () => {
@@ -88,17 +87,32 @@ export const ExtensionSettingsProvider = ({ children }: Properties) => {
         return !previous;
       });
     });
+
+    onWindowMessage<ExtensionSettings>(
+      GET_EXTENSION_SETTINGS_RESPONSE,
+      (settings, removeEventListener) => {
+        setExtensionSettings(settings);
+        removeEventListener();
+      },
+    );
   }, []);
 
-  if (!settingsQuery.data) {
-    return null;
-  }
+  useEffect(() => {
+    window.postMessage({
+      type: GET_EXTENSION_SETTINGS_REQUEST,
+    });
+  }, []);
 
   return (
     <ExtensionSettingsContext.Provider
       value={{
-        ...settingsQuery.data,
+        isAgoraApplicationEnabled,
+        isSnapshotApplicationEnabled,
+        isTallyApplicationEnabled,
+        isPolymarketApplicationEnabled,
         isContextMenuVisible,
+        isExtensionEnabled,
+        changeExtensionState,
         hideContextMenu,
       }}
     >

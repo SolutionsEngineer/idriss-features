@@ -1,6 +1,10 @@
 import { useExtensionSettings } from 'shared/extension';
 import { IDRISS_ICON_WITH_TEXT } from 'shared/idriss';
-import { Toggle } from 'shared/ui';
+import { IconButton, Toggle } from 'shared/ui';
+
+interface TopBarProps {
+  navigate
+}
 
 export const TopBar = () => {
   const { isExtensionEnabled, changeExtensionState } = useExtensionSettings();
@@ -21,6 +25,11 @@ export const TopBar = () => {
       <Toggle
         checked={isExtensionEnabled}
         onCheckedChange={changeExtensionState}
+      />
+      <IconButton
+        className=" text-black"
+        iconProps={{ name: 'DotsVerticalIcon', size: 26 }}
+        onClick={() => {}}
       />
     </nav>
   );

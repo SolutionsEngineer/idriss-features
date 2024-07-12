@@ -1,4 +1,4 @@
-export const MainContent = () => {
+export const App = () => {
   return (
     <div className="shrink-0 grow p-10">
       <div>

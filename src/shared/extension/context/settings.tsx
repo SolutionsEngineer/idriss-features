@@ -3,7 +3,6 @@ import {
   createContext,
   useCallback,
   useEffect,
-  useMemo,
   useState,
 } from 'react';
 
@@ -17,67 +16,61 @@ import {
   GET_EXTENSION_SETTINGS_REQUEST,
   GET_EXTENSION_SETTINGS_RESPONSE,
 } from '../constants';
-import { ManageExtensionStateCommand } from '../commands';
-import { ExtensionSettings } from '../types';
+import { ManageExtensionSettingsCommand } from '../commands';
+import { ExtensionSettingsStorageKey } from '../extension-settings-manager';
 
 interface Properties {
   children: ReactNode;
 }
 
-interface ExtensionSettingsContextValues extends ExtensionSettings {
+const initialExtensionSettings: Record<ExtensionSettingsStorageKey, boolean> = {
+  'entire-extension-enabled': false,
+  'agora-enabled': false,
+  'gitcoin-enabled': false,
+  'polymarket-enabled': false,
+  'snapshot-enabled': false,
+  'tally-enabled': false,
+  'tipping-enabled': false,
+};
+
+interface ExtensionSettingsContextValues {
   isContextMenuVisible: boolean;
   hideContextMenu: () => void;
-  changeExtensionState: (enabled: boolean) => Promise<void>;
+  extensionSettings: Record<ExtensionSettingsStorageKey, boolean>;
+  changeExtensionSetting: (
+    settingKey: ExtensionSettingsStorageKey,
+    enabled: boolean,
+  ) => Promise<void>;
 }
 
 const ExtensionSettingsContext = createContext<
   ExtensionSettingsContextValues | undefined
 >(undefined);
 
-const initialExtensionSettings: ExtensionSettings = {
-  isAgoraApplicationEnabled: false,
-  isExtensionEnabled: false,
-  isSnapshotApplicationEnabled: false,
-  isTallyApplicationEnabled: false,
-  isPolymarketApplicationEnabled: false,
-};
-
 export const ExtensionSettingsProvider = ({ children }: Properties) => {
+  const [extensionSettings, setExtensionSettings] = useState<
+    Record<ExtensionSettingsStorageKey, boolean>
+  >(initialExtensionSettings);
   const [isContextMenuVisible, setIsContextMenuVisible] = useState(false);
-  const [extensionSettings, setExtensionSettings] = useState(
-    initialExtensionSettings,
-  );
-
-  const isAgoraApplicationEnabled = useMemo(() => {
-    return extensionSettings.isAgoraApplicationEnabled;
-  }, [extensionSettings.isAgoraApplicationEnabled]);
-
-  const isExtensionEnabled = useMemo(() => {
-    return extensionSettings.isExtensionEnabled;
-  }, [extensionSettings.isExtensionEnabled]);
-
-  const isSnapshotApplicationEnabled = useMemo(() => {
-    return extensionSettings.isSnapshotApplicationEnabled;
-  }, [extensionSettings.isSnapshotApplicationEnabled]);
-
-  const isTallyApplicationEnabled = useMemo(() => {
-    return extensionSettings.isTallyApplicationEnabled;
-  }, [extensionSettings.isTallyApplicationEnabled]);
-
-  const isPolymarketApplicationEnabled = useMemo(() => {
-    return extensionSettings.isPolymarketApplicationEnabled;
-  }, [extensionSettings.isPolymarketApplicationEnabled]);
 
   const hideContextMenu = useCallback(() => {
     setIsContextMenuVisible(false);
   }, []);
 
-  const changeExtensionState = (enabled: boolean) => {
-    const command = new ManageExtensionStateCommand({ enabled });
-    return command.send().then(() => {
-      setExtensionSettings((previous) => {
-        return { ...previous, isExtensionEnabled: enabled };
-      });
+  const changeExtensionSetting = async (
+    settingKey: ExtensionSettingsStorageKey,
+    enabled: boolean,
+  ) => {
+    const command = new ManageExtensionSettingsCommand({
+      settingKey: settingKey,
+      enabled: enabled,
+    });
+    const extensionState = await command.send();
+    setExtensionSettings((previous) => {
+      return {
+        ...previous,
+        [settingKey]: extensionState,
+      };
     });
   };
 
@@ -88,7 +81,7 @@ export const ExtensionSettingsProvider = ({ children }: Properties) => {
       });
     });
 
-    onWindowMessage<ExtensionSettings>(
+    onWindowMessage<Record<ExtensionSettingsStorageKey, boolean>>(
       GET_EXTENSION_SETTINGS_RESPONSE,
       (settings, removeEventListener) => {
         setExtensionSettings(settings);
@@ -106,13 +99,9 @@ export const ExtensionSettingsProvider = ({ children }: Properties) => {
   return (
     <ExtensionSettingsContext.Provider
       value={{
-        isAgoraApplicationEnabled,
-        isSnapshotApplicationEnabled,
-        isTallyApplicationEnabled,
-        isPolymarketApplicationEnabled,
+        extensionSettings,
         isContextMenuVisible,
-        isExtensionEnabled,
-        changeExtensionState,
+        changeExtensionSetting,
         hideContextMenu,
       }}
     >

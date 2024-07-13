@@ -11,13 +11,13 @@ import {
 } from './context';
 
 export const App = () => {
-  const { isPolymarketApplicationEnabled } = useExtensionSettings();
+  const { extensionSettings } = useExtensionSettings();
 
   const { isTwitter } = useTwitterLocationInfo();
 
   const { isWarpcast } = useWarpcastLocationInfo();
 
-  if (!isPolymarketApplicationEnabled) {
+  if (!extensionSettings['polymarket-enabled']) {
     return null;
   }
 

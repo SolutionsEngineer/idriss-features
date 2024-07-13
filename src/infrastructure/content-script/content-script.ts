@@ -8,11 +8,10 @@ import {
   onWindowMessage,
 } from 'shared/messaging';
 import {
-  ExtensionSettings,
+  ExtensionSettingsManager,
   GET_EXTENSION_SETTINGS_REQUEST,
   GET_EXTENSION_SETTINGS_RESPONSE,
 } from 'shared/extension';
-import { ExtensionStatusManager } from 'src/popup/extension-status-manager';
 
 import { EXTENSION_BUTTON_CLICKED } from '../constants';
 
@@ -90,13 +89,7 @@ export class ContentScript {
 
   subscribeToExtensionSettings() {
     onWindowMessage(GET_EXTENSION_SETTINGS_REQUEST, async () => {
-      const detail: ExtensionSettings = {
-        isExtensionEnabled: await ExtensionStatusManager.isEnabled(),
-        isAgoraApplicationEnabled: false,
-        isPolymarketApplicationEnabled: false,
-        isSnapshotApplicationEnabled: false,
-        isTallyApplicationEnabled: false,
-      };
+      const detail = await ExtensionSettingsManager.getAllSettings();
       const message = {
         type: GET_EXTENSION_SETTINGS_RESPONSE,
         detail,

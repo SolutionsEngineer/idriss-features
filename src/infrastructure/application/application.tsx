@@ -83,7 +83,7 @@ const ApplicationWithProviders = () => {
 const Applications = () => {
   const { isTwitter } = useTwitterLocationInfo();
   const { isWarpcast } = useWarpcastLocationInfo();
-  const { isExtensionEnabled } = useExtensionSettings();
+  const { extensionSettings } = useExtensionSettings();
 
   const serviceStatusQuery = useCommandQuery({
     staleTime: Number.POSITIVE_INFINITY,
@@ -103,15 +103,18 @@ const Applications = () => {
   }, [serviceStatusQuery.data]);
 
   useEffect(() => {
-    if (!isExtensionEnabled) {
+    if (!extensionSettings['entire-extension-enabled']) {
       for (const element of document.querySelectorAll(
         '[data-idriss-send-widget="true"]',
       ))
         element.remove();
     }
-  }, [isExtensionEnabled]);
+  }, [extensionSettings]);
 
-  if (!serviceStatusQuery.data || !isExtensionEnabled) {
+  if (
+    !serviceStatusQuery.data ||
+    !extensionSettings['entire-extension-enabled']
+  ) {
     return null;
   }
 

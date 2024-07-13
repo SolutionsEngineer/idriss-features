@@ -1,19 +1,63 @@
+import { useExtensionSettings } from 'shared/extension';
+import { Toggle } from 'shared/ui';
+
 export const App = () => {
+  const { changeExtensionSetting, extensionSettings } = useExtensionSettings();
+
   return (
-    <div className="shrink-0 grow p-10">
+    <div className="shrink-0 grow p-10 text-black">
       <div>
-        <label
-          htmlFor="first_name"
-          className="mb-1 block text-xs text-gray-700"
-        >
-          Look up your wallet address
-        </label>
-        <input
-          autoFocus
-          type="text"
-          id="first_name"
-          className="mb-1.5 box-border block h-[38px] w-full rounded border border-[#cccccc] bg-white px-3 py-2 align-middle font-sans text-sm leading-[1.428571429] text-[#333333] outline-none"
-          placeholder="hello@idriss.xyz  |  +1 650...  |  @IDriss_xyz"
+        <span>Tipping</span>
+        <Toggle
+          checked={extensionSettings['tipping-enabled']}
+          onCheckedChange={(enabled) => {
+            return changeExtensionSetting('tipping-enabled', enabled);
+          }}
+        />
+      </div>
+      <div>
+        <span>Gitcoin</span>
+        <Toggle
+          checked={extensionSettings['gitcoin-enabled']}
+          onCheckedChange={(enabled) => {
+            return changeExtensionSetting('gitcoin-enabled', enabled);
+          }}
+        />
+      </div>
+      <div>
+        <span>Snapshot</span>
+        <Toggle
+          checked={extensionSettings['snapshot-enabled']}
+          onCheckedChange={(enabled) => {
+            return changeExtensionSetting('snapshot-enabled', enabled);
+          }}
+        />
+      </div>
+      <div>
+        <span>Tally</span>
+        <Toggle
+          checked={extensionSettings['tally-enabled']}
+          onCheckedChange={(enabled) => {
+            return changeExtensionSetting('tally-enabled', enabled);
+          }}
+        />
+      </div>
+      <div>
+        <span>Agora</span>
+        <Toggle
+          checked={extensionSettings['agora-enabled']}
+          onCheckedChange={(enabled) => {
+            return changeExtensionSetting('agora-enabled', enabled);
+          }}
+        />
+      </div>
+      <div>
+        <span>Polymarket</span>
+        <Toggle
+          checked={extensionSettings['polymarket-enabled']}
+          onCheckedChange={(enabled) => {
+            return changeExtensionSetting('polymarket-enabled', enabled);
+          }}
         />
       </div>
     </div>

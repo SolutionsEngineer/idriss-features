@@ -59,7 +59,7 @@ export const App = () => {
 
   return (
     <div className="shrink-0 grow p-10">
-      <div>
+      <div className="relative">
         <label
           htmlFor="first_name"
           className="mb-1 block text-xs text-gray-700"
@@ -81,7 +81,7 @@ export const App = () => {
           <>
             {addressesQuery.data?.result &&
               Object.entries(addressesQuery.data.result).length > 0 && (
-                <div className="max-h-40 overflow-y-auto rounded-md border border-gray-300 text-black">
+                <div className="absolute max-h-40 w-full overflow-y-auto rounded-md border border-gray-300 text-black">
                   {Object.entries(addressesQuery.data.result)?.map(
                     ([key, value]) => {
                       return (

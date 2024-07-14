@@ -43,25 +43,27 @@ export const App = () => {
               alt="IDriss Logo"
             />
           </a>
-          <Toggle
-            checked={extensionSettings['entire-extension-enabled']}
-            onCheckedChange={(enabled) => {
-              return changeExtensionSetting(
-                'entire-extension-enabled',
-                enabled,
-              );
-            }}
-          />
-          <IconButton
-            className=" text-black"
-            iconProps={{
-              name: activeView === 'home' ? 'DotsVerticalIcon' : 'Cross1Icon',
-              size: 26,
-            }}
-            onClick={() => {
-              setActiveView(activeView === 'home' ? 'settings' : 'home');
-            }}
-          />
+          <div className="flex items-center pr-2">
+            <Toggle
+              checked={extensionSettings['entire-extension-enabled']}
+              onCheckedChange={(enabled) => {
+                return changeExtensionSetting(
+                  'entire-extension-enabled',
+                  enabled,
+                );
+              }}
+            />
+            <IconButton
+              className=" text-black"
+              iconProps={{
+                name: activeView === 'home' ? 'DotsVerticalIcon' : 'Cross1Icon',
+                size: 26,
+              }}
+              onClick={() => {
+                setActiveView(activeView === 'home' ? 'settings' : 'home');
+              }}
+            />
+          </div>
         </nav>
 
         {activeView === 'home' ? <HomeView /> : <SettingsView />}
